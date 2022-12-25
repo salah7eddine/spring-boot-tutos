@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Objects;
 
 @SpringBootApplication
@@ -21,12 +22,20 @@ public class Main {
 
     @GetMapping("/")
     public GreetRecord greet() {
-        return new GreetRecord("Hello World !!");
+        GreetRecord greetRecord = new GreetRecord(
+                "Hello World !!",
+                List.of("JAVA", "JS", "NODEJS"),
+                new Person("Ali", 29, 70_000)
+        );
+        return greetRecord;
     }
 
-    //record GreetRecord(String greet) {}
+    record Person(String name, int age, double savings) {
 
-    class GreetRecord {
+    }
+    record GreetRecord(String greet, List<String> favProgrammingLanguages, Person person) {}
+
+   /* class GreetRecord {
         private final String greet;
 
         GreetRecord(String greet) {
@@ -53,5 +62,5 @@ public class Main {
         public int hashCode() {
             return Objects.hash(getGreet());
         }
-    }
+    }*/
 }
