@@ -21,7 +21,9 @@ public class Main {
     }
 
     @GetMapping("/")
-    public String greet() {
-        return "Hello";
+    public GreetRecord greet() {
+        return new GreetRecord("Hello World !!");
     }
+
+    record GreetRecord(String greet) {}
 }
