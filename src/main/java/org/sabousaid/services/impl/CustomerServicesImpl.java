@@ -1,6 +1,6 @@
 package org.sabousaid.services.impl;
 
-import org.sabousaid.dao.CustomerRepository;
+import org.sabousaid.Repository.CustomerRepository;
 import org.sabousaid.model.Customer;
 import org.sabousaid.services.CustomerServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,10 @@ public class CustomerServicesImpl implements CustomerServices {
 
     @Override
     public Customer updateCustomer(Integer id, Customer updateCustomer) {
-        /*updateCustomer.setId(id);
-        return customerRepository.save(updateCustomer);*/
+        /**
+            updateCustomer.setId(id);
+            return customerRepository.save(updateCustomer);
+         */
         Optional<Customer> customer = customerRepository.findById(id);
         if(customer.isPresent()) {
             updateCustomer.setId(customer.get().getId());

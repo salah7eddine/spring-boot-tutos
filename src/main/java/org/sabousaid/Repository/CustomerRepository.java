@@ -1,4 +1,4 @@
-package org.sabousaid.dao;
+package org.sabousaid.Repository;
 
 import org.sabousaid.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
