@@ -9,12 +9,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
 public class JwtUtils {
 
-    private String SECRET_KEY = "secret";
+    private String jwtSingingKey = "51655368566D597133743677397A24432646294A404E635266556A576E5A7234";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -28,8 +29,16 @@ public class JwtUtils {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+    public boolean hasClaim(String token, String claimName) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get(claimName) != null;
+    }
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts
+                .parser()
+                .setSigningKey(jwtSingingKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -38,14 +47,21 @@ public class JwtUtils {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, UserDetails userDetails) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .claim("authorities", userDetails.getAuthorities())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMicros(24))
+                )
+                .signWith(SignatureAlgorithm.HS256, jwtSingingKey).compact();
     }
 
     public Boolean isTokenValid(String token, UserDetails userDetails) {
